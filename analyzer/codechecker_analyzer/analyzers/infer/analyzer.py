@@ -62,8 +62,11 @@ class Infer(analyzer_base.SourceAnalyzer):
         # unforeseen exceptions where a general catch is justified?
         config = self.config_handler
 
+        # CodeChecker already parallelizes over the build actions, so Infer
+        # must not spawn its own worker processes on top of that. Extra
+        # arguments are appended later, so users can still override this.
         analyzer_cmd = [Infer.analyzer_binary(), 'run', '--keep-going',
-                        '--project-root', '/']
+                        '--jobs', '1', '--project-root', '/']
 
         for checker_name, value in config.checks().items():
             filtered_name = checker_name.replace("infer-", "")
